@@ -11,90 +11,74 @@ import java.awt.event.ActionListener;
 
 public class stockUI {
 	
-	//Stock real names
 	static String[] names = new String[] {"Intel", "Ali Baba", "Tesla", "AirBus", "Yahoo","Nokia"};
    	
-	//Stock symbols for retrieving
 	static String[] symbols = new String[] {"INTC", "BABA", "TSLA", "AIR.PA", "YHOO", "NOK"};
-	
-	/**
-     * Constructor for stockUI. Creates frame, adds two panels. First panel is then 
-     * populated with: Stock info UI with combobox for stock selection, Textpane with three default stocks,
-     * button for changing the panels. Second panel is populated with real time stock buy proposals.
-     */
 	
 	public stockUI() {
 	
 		JFrame uiFrame = createStockFrame();
+		//make sure the JFrame is visible
+	    uiFrame.setVisible(true);
 		
-		//The first JPanel
+		//The first JPanel contains a JLabel and JTextField
         final JPanel comboPanel = new JPanel();
-        comboPanel.setVisible(true); //Show panel1
+        comboPanel.setVisible(true);
         comboPanel.setPreferredSize(new Dimension(150,150));
-        uiFrame.add(comboPanel, BorderLayout.NORTH); //Add panel to frame
+        //comboPanel.setBackground(Color.WHITE);
+        uiFrame.add(comboPanel, BorderLayout.NORTH);
         
-        //Create the second JPanel. JPanel is not visible.
+        //Create the second JPanel. Add a JLabel and JList and
+        //make use the JPanel is not visible.
     	final JPanel tipPanel = new JPanel();
         tipPanel.setVisible(false);
         tipPanel.setBackground(Color.WHITE);
-        uiFrame.add(tipPanel, BorderLayout.CENTER); //Add panel to frame
+        uiFrame.add(tipPanel, BorderLayout.CENTER);
         
-    	addStockInfo(uiFrame, comboPanel); //Create info UI
+    	addStockInfo(uiFrame, comboPanel);
     	
-    	createTextPane(uiFrame, comboPanel); //Create default textpane
+    	luoTekstiruutu(uiFrame, comboPanel);
     	
-    	createTips(tipPanel); //Create tips with stock proposals
+    	createTips(uiFrame, tipPanel);
     	
-        createTipButton(uiFrame, comboPanel, tipPanel); //Create the tip button
-        
-        //make the frame visible
-        uiFrame.setVisible(true);
+        createTipButton(uiFrame, comboPanel, tipPanel);
 	  
 }
 
-	/**
-     * Creates the stock frame
-     */
-	
 	   public static JFrame createStockFrame() 
 	   {
 		   
 	       JFrame uiFrame = new JFrame();
 	       
-	       //make sure the program exits when the frame closes
+	       //make surethe program exits when the frame closes
 	       uiFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	       uiFrame.setTitle("Get rich");
+	       uiFrame.setTitle("Rikastu helposti");
 	       uiFrame.setSize(250,250);
 	       uiFrame.setForeground(Color.DARK_GRAY);
 	       
-	       //Put the frame in the middle of the screen
+	       //This will center the JFrame in the middle of the screen
 	       uiFrame.setLocationRelativeTo(null);
 	       
 	       return uiFrame;
 	   }
-	   
-	   /**
-	     * Creates the stock info UI
-	     */ 
-	   
+	    
 	    public static void addStockInfo(JFrame uiFrame, JPanel comboPanel )
 		{
 	    	
-	        JComboBox stockList = new JComboBox(names); 
+	        JComboBox stockList = new JComboBox(names);
 	        stockList.setAlignmentX(Component.RIGHT_ALIGNMENT);
 	        stockList.setAlignmentY(Component.TOP_ALIGNMENT);
 	  
-	        JTextPane test = new JTextPane(); //New Textpane
-	        test.setContentType("text/html"); //HTML content
+	        JTextPane test = new JTextPane();
+	        test.setContentType("text/html");
 	        test.setBounds(0, 0, 100, 100);
 	        
-	        Stock defaultStock = getOneStock(symbols[0]); //Gets the first stock to show in start
-		    test.setText(initializeInfoWindow(defaultStock)); //Puts the first stock data
+	        Stock defaultStock = getOneStock(symbols[0]);
+		    test.setText(initializeInfoWindow(defaultStock));
 		    
-	        comboPanel.add(stockList); //Adds components to panel
+	        comboPanel.add(stockList);
 	        comboPanel.add(test);
 	        
-	        //Actionlistener created for selecting the item in combobox
 	        stockList.addActionListener(new ActionListener()
     		{
 	        	
@@ -108,7 +92,7 @@ public class stockUI {
     					BigDecimal ask = selected.getQuote().getAsk();
     					BigDecimal bid = selected.getQuote().getBid();
     					long volume = selected.getQuote().getVolume();
-    					StringBuilder details = new StringBuilder(); //Builds string for showing the text in textpane
+    					StringBuilder details = new StringBuilder();
     					details.append("<html>");
     					details.append("Last bid " + "<font color='green'>" + bid.toString() +"</font>" +" USD");
     				    details.append("<br>");
@@ -127,24 +111,23 @@ public class stockUI {
 	        
 		}
 	    
-	    /**
-	     * Creates the tips listing
-	     */
-	    
-	    public static void createTips(JPanel tipPanel)
+	    public static void createTips(JFrame uiFrame, JPanel tipPanel)
 	    {
 	    	
+	        //JLabel tipLbl = new JLabel("OSTA");
 	        JTextPane infos = new JTextPane();
 	        infos.setContentType("text/html");
+	        //infos.setBounds(20, 50, 100, 200);
 	        infos.setBackground(Color.CYAN);
 	        
-	        tipPanel.add(infos); //Adds textpane in panel2
+	        //tipPanel.add(tipLbl);
+	        tipPanel.add(infos);
 	        
 	        StringBuilder details = new StringBuilder();
 	        details.append("<html><table border='1'><tr><th>Name</th><th>Price </th><th>Todays change %</th><th>Difference for 200 days</th><th>200 day average</th><th>EPS estimate next Q</th><th>One year target price</th><th>P/E ratio</tr>");
-	        String [] stockList = calculateTips(); //gets the calculated proposals
-	        Map <String,Stock> stocks = getMultipleStocks(stockList); //Gets all the stocks at once
-	        for (int i=0; i<stockList.length-1;i++) //populates the table with right details
+	        String [] stockList = calculateTips();
+	        Map <String,Stock> stocks = getMultipleStocks(stockList);
+	        for (int i=0; i<stockList.length-1;i++)
 	        {
 		        Stock stock = stocks.get(stockList[i]);
 		        String name = stock.getName();
@@ -162,14 +145,14 @@ public class stockUI {
 	       
 	    }
 	    
-	    /**
-	     * Creates the tips button and adds actionlistener for clicking on it
-	     */
-	    
 	    public static void createTipButton(JFrame uiFrame, JPanel tipPanel, JPanel comboPanel)
 	    {
-	    	JButton stockBut = new JButton( "TIPS");
-	  
+	    	JButton stockBut = new JButton( "Vinkit");
+	    	   
+	        //The ActionListener class is used to handle the
+	        //event that happens when the user clicks the button.
+	        //As there is not a lot that needs to happen we can 
+	        //define an anonymous inner class to make the code simpler.
 	        stockBut.addActionListener(new ActionListener()
 	        {
 	            @Override
@@ -181,7 +164,7 @@ public class stockUI {
 	               //value or vice versa.
 	            	tipPanel.setVisible(!tipPanel.isVisible());
 	                comboPanel.setVisible(!comboPanel.isVisible());
-	                if(!tipPanel.isVisible()) //Change the size when swapping panels
+	                if(!tipPanel.isVisible())
 	                {
 	                	uiFrame.setSize(1100,350);
 	                }
@@ -195,10 +178,6 @@ public class stockUI {
 	        
 	        uiFrame.add(stockBut, BorderLayout.EAST);
 	    }
-	    
-	    /**
-	     * Method for retrieving one stock
-	     */
 
 		public static Stock getOneStock(String stock)
 	    {
@@ -210,26 +189,19 @@ public class stockUI {
 			}
 			return one;
 	    }
-		
-		/**
-	     * Method for getting multiple stocks at once
-	     */
-		
+	    
 	    public static Map<String, Stock> getMultipleStocks (String [] symbols)
 	    {
-	    	Map<String, Stock> stocks = null; //Map the stock & string
+	    	Map<String, Stock> stocks = null;
 			try {
 				stocks = YahooFinance.get(symbols);
 			} catch (IOException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} 
+			} // single request
 			
 			return stocks;
 	    }
-	    
-	    /**
-	     * Creates the info UI
-	     */
 	    
 	    public static String initializeInfoWindow(Stock s)
 	    {
@@ -238,7 +210,7 @@ public class stockUI {
 			BigDecimal ask = s.getQuote().getAsk();
 			BigDecimal bid = s.getQuote().getBid();
 			long volume = s.getQuote().getVolume();
-			StringBuilder details = new StringBuilder(); //Build the string for showing the details
+			StringBuilder details = new StringBuilder();
 			details.append("<html>");
 			details.append("Last bid " + "<font color='green'>" + bid.toString() +"</font>" +" USD");
 		    details.append("<br>");
@@ -253,16 +225,12 @@ public class stockUI {
 		    return details.toString();
 	    }
 	    
-	    /**
-	     * Calculates the stock proposals
-	     */
-	    
 	    public static String [] calculateTips()
 	    {
 	    	String [] multiple = new String[] {"INTC", "BABA", "CSCO", "FOXA", "MU", "NOK", "MAR", "WMT", "F", "FB"};
 	    	Map<String, Stock> many = getMultipleStocks(multiple);
 	    	int size = multiple.length;
-	    	for (int i=0; i<size-1;i++) //Gets the stock details and then arranges with bubble sort
+	    	for (int i=0; i<size-1;i++)
 	    	{
 	    		for (int j=size-1;j>i;j--)
 	    		{
@@ -283,72 +251,38 @@ public class stockUI {
 	    	return multiple;
 	    }
 	    
-	    
-	    /**
-	     * Creates a JTextPane with information on Nokia, Yahoo and Google
-	     */
-	    public void createTextPane( JFrame uiFrame, JPanel panel ) {
+	    public void luoTekstiruutu( JFrame guiFrame, JPanel panel ) {
             
-            Stock nokiaStock = null;
-            Stock yahooStock = null;
-            Stock googleStock = null;
+            Stock nokia = null;
+            Stock yahoo = null;
+            Stock google = null;
             try {
-                      nokiaStock = YahooFinance.get("NOK");
-                      yahooStock = YahooFinance.get("YHOO");
-                      googleStock = YahooFinance.get("GOOG");
+                      nokia = YahooFinance.get("NOK");
+                      yahoo = YahooFinance.get("YHOO");
+                      google = YahooFinance.get("GOOG");
             } catch (IOException e) {
                       e.printStackTrace();
             }
             
-            //the price and change of the stock are saved into variables <name>Price and <name>Change
-            BigDecimal nokiaPrice = nokiaStock.getQuote().getPrice();
-            BigDecimal nokiaChange = nokiaStock.getQuote().getChangeInPercent();
-            BigDecimal yahooPrice = yahooStock.getQuote().getPrice();
-            BigDecimal yahooChange = yahooStock.getQuote().getChangeInPercent();
-            BigDecimal googlePrice = googleStock.getQuote().getPrice();
-            BigDecimal googleChange = googleStock.getQuote().getChangeInPercent();
+            BigDecimal nokiaPrice = nokia.getQuote().getPrice();
+            BigDecimal nokiaChange = nokia.getQuote().getChangeInPercent();
+            BigDecimal yahooPrice = yahoo.getQuote().getPrice();
+            BigDecimal yahooChange = yahoo.getQuote().getChangeInPercent();
+            BigDecimal googlePrice = google.getQuote().getPrice();
+            BigDecimal googleChange = google.getQuote().getChangeInPercent();
             
-            //the text that will be added to the text pane
-            StringBuffer text = new StringBuffer("<html>");
             
-            /*if the change is positive, stock information is coloured green
-            if negative, colour is red*/
-            //NOKIA
-            if ( nokiaChange.compareTo(BigDecimal.ZERO) == 1 ) {
-            	text.append("<font color='green'>Nokia "+nokiaPrice+" USD,  +"+nokiaChange+" %"+"</font>");
-            }
-            else {
-            	text.append("<font color='red'>Nokia "+nokiaPrice+" USD,  "+nokiaChange+" %</font>");
-            }
-            text.append("<br>");
-            
-            //YAHOO
-            if ( yahooChange.compareTo(BigDecimal.ZERO) == 1 ) {
-            	text.append("<font color='green'>Yahoo "+yahooPrice+" USD,  +"+yahooChange+" %</font>");
-            }
-            else {
-            	text.append("<font color='red'>Yahoo "+yahooPrice+" USD,  "+yahooChange+" %</font>");
-            }
-            text.append("<br>");
-            
-            //GOOGLE
-            if ( googleChange.compareTo(BigDecimal.ZERO) == 1 ) {
-            	text.append("<font color='green'>Google "+googlePrice+" USD,  +"+googleChange+" %</font>");
-            }
-            else {
-            	text.append("<font color='red'>Google "+googlePrice+" USD,  "+googleChange+" %</font>");
-            }
-            text.append("</html>");
+            //final JPanel panel = new JPanel();
+            //panel.setVisible(true);
       
-            
-            JTextPane textPane = new JTextPane(); //text pane is created
-            textPane.setContentType("text/html"); //text type is set html for the colours
-            textPane.setText(text.toString()); //text is added
-            textPane.setEditable(false);
+            JTextPane tekstiruutu = new JTextPane();
+            tekstiruutu.setText("Nokia  "+nokiaPrice+" USD  "+nokiaChange+"\nYahoo  "+yahooPrice
+                      +" USD  "+yahooChange+"\nGoogle  "+googlePrice+" USD  "+googleChange);
+            tekstiruutu.setEditable(false);
       
-            panel.add(textPane);
+            panel.add(tekstiruutu);
       
-            uiFrame.add(panel, BorderLayout.WEST);
+            guiFrame.add(panel, BorderLayout.WEST);
 
 	    }
 
