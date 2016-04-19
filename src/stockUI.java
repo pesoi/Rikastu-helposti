@@ -23,14 +23,14 @@ public class stockUI {
      * button for changing the panels. Second panel is populated with real time stock buy proposals.
      */
 	
-	public stockUI() {
+	public stockUI(String stock1, String stock2, String stock3) {
 	
 		JFrame uiFrame = createStockFrame();
 		
 		//The first JPanel
         final JPanel comboPanel = new JPanel();
         comboPanel.setVisible(true); //Show panel1
-        comboPanel.setPreferredSize(new Dimension(150,150));
+        comboPanel.setPreferredSize(new Dimension(200,150));
         uiFrame.add(comboPanel, BorderLayout.NORTH); //Add panel to frame
         
         //Create the second JPanel. JPanel is not visible.
@@ -41,7 +41,7 @@ public class stockUI {
         
     	addStockInfo(uiFrame, comboPanel); //Create info UI
     	
-    	createTextPane(uiFrame, comboPanel); //Create default textpane
+    	createTextPane(uiFrame, comboPanel, stock1, stock2, stock3); //Create default textpane
     	
     	createTips(tipPanel); //Create tips with stock proposals
     	
@@ -64,7 +64,7 @@ public class stockUI {
 	       //make sure the program exits when the frame closes
 	       uiFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	       uiFrame.setTitle("Get rich");
-	       uiFrame.setSize(250,250);
+	       uiFrame.setSize(280,250);
 	       uiFrame.setForeground(Color.DARK_GRAY);
 	       
 	       //Put the frame in the middle of the screen
@@ -184,10 +184,14 @@ public class stockUI {
 	                if(!tipPanel.isVisible()) //Change the size when swapping panels
 	                {
 	                	uiFrame.setSize(1100,350);
+	                	//Put the frame in the middle of the screen
+	         	       	uiFrame.setLocationRelativeTo(null);
 	                }
 	                else
 	                {
-	                	uiFrame.setSize(250,250);
+	                	uiFrame.setSize(280,250);
+	                	//Put the frame in the middle of the screen
+	         	       	uiFrame.setLocationRelativeTo(null);
 	                }
 
 	            }
@@ -285,72 +289,76 @@ public class stockUI {
 	    
 	    
 	    /**
-	     * Creates a JTextPane with information on Nokia, Yahoo and Google
-	     */
-	    public void createTextPane( JFrame uiFrame, JPanel panel ) {
-            
-            Stock nokiaStock = null;
-            Stock yahooStock = null;
-            Stock googleStock = null;
-            try {
-                      nokiaStock = YahooFinance.get("NOK");
-                      yahooStock = YahooFinance.get("YHOO");
-                      googleStock = YahooFinance.get("GOOG");
-            } catch (IOException e) {
-                      e.printStackTrace();
-            }
-            
-            //the price and change of the stock are saved into variables <name>Price and <name>Change
-            BigDecimal nokiaPrice = nokiaStock.getQuote().getPrice();
-            BigDecimal nokiaChange = nokiaStock.getQuote().getChangeInPercent();
-            BigDecimal yahooPrice = yahooStock.getQuote().getPrice();
-            BigDecimal yahooChange = yahooStock.getQuote().getChangeInPercent();
-            BigDecimal googlePrice = googleStock.getQuote().getPrice();
-            BigDecimal googleChange = googleStock.getQuote().getChangeInPercent();
-            
-            //the text that will be added to the text pane
-            StringBuffer text = new StringBuffer("<html>");
-            
-            /*if the change is positive, stock information is coloured green
-            if negative, colour is red*/
-            //NOKIA
-            if ( nokiaChange.compareTo(BigDecimal.ZERO) == 1 ) {
-            	text.append("<font color='green'>Nokia "+nokiaPrice+" USD,  +"+nokiaChange+" %"+"</font>");
-            }
-            else {
-            	text.append("<font color='red'>Nokia "+nokiaPrice+" USD,  "+nokiaChange+" %</font>");
-            }
-            text.append("<br>");
-            
-            //YAHOO
-            if ( yahooChange.compareTo(BigDecimal.ZERO) == 1 ) {
-            	text.append("<font color='green'>Yahoo "+yahooPrice+" USD,  +"+yahooChange+" %</font>");
-            }
-            else {
-            	text.append("<font color='red'>Yahoo "+yahooPrice+" USD,  "+yahooChange+" %</font>");
-            }
-            text.append("<br>");
-            
-            //GOOGLE
-            if ( googleChange.compareTo(BigDecimal.ZERO) == 1 ) {
-            	text.append("<font color='green'>Google "+googlePrice+" USD,  +"+googleChange+" %</font>");
-            }
-            else {
-            	text.append("<font color='red'>Google "+googlePrice+" USD,  "+googleChange+" %</font>");
-            }
-            text.append("</html>");
-      
-            
-            JTextPane textPane = new JTextPane(); //text pane is created
-            textPane.setContentType("text/html"); //text type is set html for the colours
-            textPane.setText(text.toString()); //text is added
-            textPane.setEditable(false);
-      
-            panel.add(textPane);
-      
-            uiFrame.add(panel, BorderLayout.WEST);
+	      * Creates a JTextPane with information on three stocks
+	      * @param symbol1 Stock symbol
+	      * @param symbol2 Stock symbol
+	      * @param symbol3 Stock symbol
+	      */
+	     public void createTextPane( JFrame uiFrame, JPanel panel, String symbol1, String symbol2, String symbol3 ) {
+	            
+	            Stock stock1 = null;
+	            Stock stock2 = null;
+	            Stock stock3 = null;
+	            try {
+	             stock1 = YahooFinance.get(symbol1);
+	                stock2 = YahooFinance.get(symbol2);
+	                stock3 = YahooFinance.get(symbol3);
+	            } catch (IOException e) {
+	                e.printStackTrace();
+	            }
+	            
+	            //the price and change of the stock are saved into variables price<number> and change<number>
+	            BigDecimal price1 = stock1.getQuote().getPrice();
+	            BigDecimal change1 = stock1.getQuote().getChangeInPercent();
+	            BigDecimal price2 = stock2.getQuote().getPrice();
+	            BigDecimal change2 = stock2.getQuote().getChangeInPercent();
+	            BigDecimal price3 = stock3.getQuote().getPrice();
+	            BigDecimal change3 = stock3.getQuote().getChangeInPercent();
+	            
+	            //the text that will be added to the text pane
+	            StringBuffer text = new StringBuffer("<html>");
+	            
+	            /*if the change is positive, stock information is coloured green
+	            if negative, colour is red*/
+	            //STOCK1
+	            if ( change1.compareTo(BigDecimal.ZERO) == 1 ) {
+	             text.append("<font color='green'>Nokia "+price1+" USD,  +"+change1+" %"+"</font>");
+	            }
+	            else {
+	             text.append("<font color='red'>Nokia "+price1+" USD,  "+change1+" %</font>");
+	            }
+	            text.append("<br>");
+	            
+	            //STOCK2
+	            if ( change2.compareTo(BigDecimal.ZERO) == 1 ) {
+	             text.append("<font color='green'>Yahoo "+price2+" USD,  +"+change2+" %</font>");
+	            }
+	            else {
+	             text.append("<font color='red'>Yahoo "+price2+" USD,  "+change2+" %</font>");
+	            }
+	            text.append("<br>");
+	            
+	            //STOCK3
+	            if ( change3.compareTo(BigDecimal.ZERO) == 1 ) {
+	             text.append("<font color='green'>Google "+price3+" USD,  +"+change3+" %</font>");
+	            }
+	            else {
+	             text.append("<font color='red'>Google "+price3+" USD,  "+change3+" %</font>");
+	            }
+	            text.append("</html>");
+	      
+	            
+	            JTextPane textPane = new JTextPane(); //text pane is created
+	            textPane.setContentType("text/html"); //text type is set html for the colours
+	            textPane.setText(text.toString()); //text is added
+	            textPane.setEditable(false);
+	      
+	            panel.add(textPane);
+	      
+	            uiFrame.add(panel, BorderLayout.WEST);
 
-	    }
+	     }
+
 
 	    
 	}
